@@ -1,1 +1,37 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+:root {
+  --variable-base: #fffbe8;
+  --variable-border: #a3a3a3;
+  --variable-text: #101219;
+}
+
+[data-theme="dark"] {
+  --variable-base: #292d3e;
+  --variable-darker: #222533;
+  --variable-text: #fefefc;
+}
+
+@theme {
+  --color-base: var(--variable-base);
+  --color-border: var(--variable-border);
+  --color-text: var(--variable-text);
+
+  /* Sometimes i gotta use the exact color */
+  --color-light-base: #fffbe8;
+  --color-dark-base: #292d3e;
+
+  --color-green: #67ff5c;
+  --color-red: #ff7070;
+  --color-blue: #0081cc;
+  --color-white: #fefefc;
+  --color-black: #1c1f2a;
+}
+
+* {
+  transition-property: border-color, scale, width;
+  transition-duration: 300ms;
+  transition-timing-function: ease-in-out;
+}
