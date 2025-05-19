@@ -4,8 +4,8 @@
 @import "tailwindcss";
 
 @theme {
-  --color-bg: #ffffff;
-  --color-base: #fffbe8;
+  --color-bg: #fffbe8;
+  --color-base: #fff8d6;
   --color-text: #101219;
   --color-blue: #006ba8;
 
