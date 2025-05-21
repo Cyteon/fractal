@@ -7,14 +7,23 @@
   --color-bg: #fffbe8;
   --color-base: #fff8d6;
   --color-text: #101219;
-  --color-blue: #006ba8;
 
+  --color-brown: #241915;
+  --color-blue: #1e90ff;
   --color-black: #1e1e1e; 
-
   --color-green: #67ff5c;
-  --color-red: #ff7070;
+  --color-red: #d62d2d;
   --color-white: #fefefc;
   --color-black: #1c1f2a;
+  --color-border: #1c1f2a80;
+}
+
+body {
+  background-size: 40px 40px;
+  background-position: center;
+  background-image:
+    linear-gradient(to right, #1c1f2a33 1px, transparent 1px),
+    linear-gradient(to bottom, #1c1f2a33 1px, transparent 1px);
 }
 
 * {
@@ -23,8 +32,25 @@
   transition-timing-function: ease-in-out;
   
   font-family: 'Playfair Display', serif;
+
+  border-color: var(--color-border);
 }
 
 a {
   color: var(--color-blue);
+}
+
+input {
+  border-width: 1px;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  outline: none
+}
+
+input:focus {
+    outline: none
+}
+
+button:hover {
+  cursor: pointer;
 }

@@ -2,7 +2,7 @@
     import { Mail } from "@lucide/svelte";
 </script>
 
-<footer class="p-2 px-3 flex w-full border-t border-black/40 mt-auto">
+<footer class="p-2 px-3 flex w-full border-t mt-auto">
     <p>The email service you have dreamed of</p>
 
     <div class="ml-auto flex">

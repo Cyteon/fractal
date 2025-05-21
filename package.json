@@ -27,6 +27,8 @@
     "@lucide/svelte": "^0.511.0",
     "@prisma/client": "^6.8.2",
     "@prisma/extension-accelerate": "^2.0.0",
-    "prisma": "^6.8.2"
+    "bcrypt": "^6.0.0",
+    "prisma": "^6.8.2",
+    "typescript-cookie": "^1.0.6"
   }
 }
