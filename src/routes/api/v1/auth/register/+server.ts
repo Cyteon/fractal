@@ -1,7 +1,16 @@
 import prisma from "$lib/prisma";
 import bcrypt from "bcrypt";
+import { DISABLE_ADDITIONAL_SIGNUPS } from "$env/static/private";
 
 export async function POST({ request }) {
+    const userCount = await prisma.user.count();
+
+    if (DISABLE_ADDITIONAL_SIGNUPS === "true" && userCount > 0) {
+        return Response.json({ error: "Signups to this instance are disabled" }, {
+            status: 403,
+        });
+    }
+
     const { email, password } = await request.json();
 
     if (!email || !password) {
@@ -21,9 +30,6 @@ export async function POST({ request }) {
             status: 409,
         });
     }
-
-    const userCount = await prisma.user.count();
-
     try {
         const hash = await bcrypt.hash(password, 12);
 

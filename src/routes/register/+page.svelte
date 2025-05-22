@@ -1,6 +1,5 @@
 <script lang="ts">
     import { goto } from "$app/navigation";
-    import { PUBLIC_DISABLE_SIGNUPS } from "$env/static/public"
 
     let email: string = "";
     let password: string = "";
@@ -52,37 +51,35 @@
 </script>
 
 <div class="flex h-full">
-    {#if PUBLIC_DISABLE_SIGNUPS === "true"}  
-        <h1 class="text-3xl font-bold m-auto text-center bg-base p-4 rounded-md border">
-            Signups are currently disabled.
-        </h1>
-    {:else}
-        <div class="p-4 m-auto w-full md:w-1/4 flex flex-col bg-base rounded-md border border-black/40">
-            <h1 class="text-2xl font-bold mb-4">Create an Account</h1>
+    <div class="p-4 m-auto w-full md:w-1/4 flex flex-col bg-base rounded-md border border-black/40">
+        <h1 class="text-2xl font-bold mb-4">Create an Account</h1>
 
-            <input
-                type="email"
-                bind:value={email}
-                placeholder="Email"
-                class="mb-2"
-            />
+        <input
+            type="email"
+            bind:value={email}
+            placeholder="Email"
+            class="mb-2"
+        />
 
-            <input
-                type="password"
-                bind:value={password}
-                placeholder="Password"
-            />
+        <input
+            type="password"
+            bind:value={password}
+            placeholder="Password"
+        />
 
-            <p class="text-red text-sm mt-2 font-semibold">
-                {error}
-            </p>
+        <p class="text-red text-sm mt-2 font-semibold">
+            {error}
+        </p>
 
-            <button
-                class="mt-2 bg-brown text-white font-semibold text-lg p-2 rounded-md"
-                on:click={register}
-            >
-                Register
-            </button>
-        </div>
-    {/if}
+        <button
+            class="mt-2 bg-brown text-white font-semibold text-lg p-2 rounded-md"
+            on:click={register}
+        >
+            Register
+        </button>
+
+        <p class="text-sm mt-3 font-semibold">
+            Already have an account? <a href="/login">Login</a>
+        </p>
+    </div>
 </div>  

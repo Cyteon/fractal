@@ -82,5 +82,9 @@
         >
             Login
         </button>
+
+        <p class="text-sm mt-3 font-semibold">
+            Don't have an account? <a href="/register">Register</a>
+        </p>
     </div>
 </div>  
