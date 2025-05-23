@@ -17,17 +17,43 @@ datasource db {
 }
 
 model User {
-  id        String  @id @default(uuid())
-  email     String  @unique
-  password  String
-  admin     Boolean @default(false)
-  suspended Boolean @default(false)
-  tokens     Token[]
+  id             String      @id @default(uuid())
+  email          String      @unique
+  password       String
+  admin          Boolean     @default(false)
+  suspended      Boolean     @default(false)
+  tokens         Token[]
+  orgMemberships OrgMember[]
 }
 
 model Token {
-  token  String @id
-  userId String
-  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  token     String   @id
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
+}
+
+enum Role {
+  OWNER
+  ADMIN
+  MEMBER
+}
+
+model OrgMember {
+  id        String   @id @default(uuid())
+  userId    String
+  orgId     String
+  role      Role     @default(MEMBER)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user User @relation(fields: [userId], references: [id])
+  org  Org  @relation(fields: [orgId], references: [id])
+}
+
+model Org {
+  id      String      @id @default(uuid())
+  name    String
+  slug    String      @unique
+  members OrgMember[]
 }
