@@ -25,12 +25,15 @@
   },
   "dependencies": {
     "@lucide/svelte": "^0.511.0",
+    "@polar-sh/sveltekit": "^0.4.0",
     "@prisma/client": "^6.8.2",
     "@prisma/extension-accelerate": "^2.0.0",
     "@sentry/sveltekit": "^9.22.0",
     "@sveltejs/adapter-node": "^5.2.12",
     "bcrypt": "^6.0.0",
+    "install": "^0.13.0",
     "prisma": "^6.8.2",
-    "typescript-cookie": "^1.0.6"
+    "typescript-cookie": "^1.0.6",
+    "zod": "^3.25.23"
   }
 }

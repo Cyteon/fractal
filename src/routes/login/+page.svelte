@@ -50,7 +50,8 @@
         } catch (err) {
             console.error(err);
             error = "An error occurred. Please try again.";
-            return;
+            
+            throw err;
         }
     }
 </script>
