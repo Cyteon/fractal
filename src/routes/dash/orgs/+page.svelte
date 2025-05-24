@@ -8,7 +8,7 @@
         <h1 class="text-2xl font-bold mb-2">Select an Organization</h1>
         
         {#each state.orgs as org}
-            <div class="p-2 border rounded-md mb-2 flex">
+            <div class="p-2 border border-dashed rounded-md mb-2 flex">
                 <div>
                     <h1 class="text-xl font-bold">{org.name}</h1>
                     <p class="text-sm font-semibold">Slug: {org.slug}</p>
