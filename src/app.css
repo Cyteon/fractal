@@ -1,6 +1,5 @@
-@import url(
-  'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap'
-);
+@import url( 'https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cabin:ital,wght@0,400..700;1,400..700&display=swap');
 @import "tailwindcss";
 
 @theme {
@@ -11,10 +10,9 @@
   --color-brown: #241915;
   --color-blue: #1e90ff;
   --color-black: #1e1e1e; 
-  --color-green: #67ff5c;
+  --color-green: #328c2b;
   --color-red: #d62d2d;
   --color-white: #fefefc;
-  --color-black: #1c1f2a;
   --color-border: #1c1f2a80;
 }
 
@@ -31,9 +29,13 @@ body {
   transition-duration: 300ms;
   transition-timing-function: ease-in-out;
   
-  font-family: 'Playfair Display', serif;
+  font-family: 'Cabin', sans-serif;
 
   border-color: var(--color-border);
+}
+
+.fancy {
+  font-family: 'Playfair Display', serif;
 }
 
 a {

@@ -5,7 +5,11 @@ export default async function verify(request: Request) {
 
     if (!token) {
         // try to get token from cookie, tho we prefer auth header
-        token = request.headers.get("cookie")?.split("token=")[1];
+        const cookies = request.headers.get("cookie");
+        if (cookies) {
+            const tokenMatch = cookies.match(/(?:^|; )token=([^;]*)/);
+            token = tokenMatch?.[1];
+        }
     }
 
     if (!token) {

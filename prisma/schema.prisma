@@ -17,13 +17,14 @@ datasource db {
 }
 
 model User {
-  id             String      @id @default(uuid())
-  email          String      @unique
+  id             String          @id @default(uuid())
+  email          String          @unique
   password       String
-  admin          Boolean     @default(false)
-  suspended      Boolean     @default(false)
+  admin          Boolean         @default(false)
+  suspended      Boolean         @default(false)
   tokens         Token[]
   orgMemberships OrgMember[]
+  AuditLogEntry  AuditLogEntry[]
 }
 
 model Token {
@@ -52,8 +53,28 @@ model OrgMember {
 }
 
 model Org {
-  id      String      @id @default(uuid())
-  name    String
-  slug    String      @unique
-  members OrgMember[]
+  id                      String    @id @default(uuid())
+  name                    String
+  slug                    String    @unique
+  subscribed              Boolean   @default(false)
+  polarCustomerId         String?
+  subcriptionMadeByUserId String?
+  subscriptionCreatedAt   DateTime?
+  subscriptionId          String?
+
+  members       OrgMember[]
+  AuditLogEntry AuditLogEntry[]
+}
+
+model AuditLogEntry {
+  id            String   @id @default(uuid())
+  orgId         String
+  userId        String
+  action        String
+  humanReadable String   @default("No description was found, for more information please contact support")
+  type          String
+  createdAt     DateTime @default(now())
+
+  org  Org  @relation(fields: [orgId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 }

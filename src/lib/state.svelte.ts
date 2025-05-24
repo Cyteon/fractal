@@ -11,6 +11,7 @@ export interface IState {
         name: string;
         slug: string;
         role: string;
+        subscribed: boolean;
     }[],
 
     currentOrg: {
@@ -18,13 +19,17 @@ export interface IState {
         name: string;
         slug: string;
         role: string;
+        subscribed: boolean;
     } | null;
+
+    finishedLoading: boolean;
 }
 
 const state: IState = $state({
     user: null,
     orgs: [],
     currentOrg: null,
+    finishedLoading: false,
 });
 
 export default state;

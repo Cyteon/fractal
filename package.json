@@ -25,6 +25,7 @@
   },
   "dependencies": {
     "@lucide/svelte": "^0.511.0",
+    "@polar-sh/sdk": "^0.32.16",
     "@polar-sh/sveltekit": "^0.4.0",
     "@prisma/client": "^6.8.2",
     "@prisma/extension-accelerate": "^2.0.0",

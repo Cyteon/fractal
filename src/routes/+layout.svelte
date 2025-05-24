@@ -32,8 +32,9 @@
 
 					if (res.ok) {
 						const data = await res.json();
-						state.user = data;
+						state.user = data.user;
 						state.orgs = data.orgs;
+						state.finishedLoading = true;
 
 						if (
 							(!localStorage.getItem("currentOrg") || data.orgs.length == 0)
