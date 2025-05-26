@@ -31,9 +31,10 @@
                 }),
             });
 
-            const data = await res.json();
+            let data = await res.json();
 
             if (res.ok) {
+                data.role = "OWNER";
                 state.orgs = [...state.orgs, data];
 
                 goto("/dash/orgs");

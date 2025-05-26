@@ -2,7 +2,7 @@
     import { goto } from "$app/navigation";
     import Sidebar from "$lib/components/Sidebar.svelte";
     import state_ from "$lib/state.svelte";
-    import { Check } from "@lucide/svelte";
+    import { Check, X } from "@lucide/svelte";
     import { PUBLIC_POLAR_PRODUCT_BASIC_TIER } from "$env/static/public";
     import { untrack } from "svelte";
     let { data } = $props();
@@ -29,8 +29,12 @@
                             }
                         );
 
-                        if (!res.ok) {
-                            throw new Error("Failed to fetch subscription data");
+                        if (res.status === 404) {
+                            subscription = {};
+                            finishedLoadingSub = true;
+                            return;
+                        } else if (!res.ok) {
+                            throw new Error("Failed to fetch subscription data: " + await res.text());
                         }
 
                         const subData = await res.json();
@@ -86,10 +90,12 @@
                                 <p class="text-lg">
                                     {meter.name}
                                 </p>
+                                
                                 <p class="ml-auto my-auto text-lg">
-                                            {(meter.consumedUnits * meter.price).toFixed(2)}$
-                                        </p>
-                                    </div>
+                                    {(meter.consumedUnits * meter.price).toFixed(2)}$
+                                </p>
+                            </div>
+
                             <p class="text-sm mt-[-8px] mb-2">
                                 {meter.price*1000}$/1000
                             </p>
@@ -107,43 +113,61 @@
                         </div>
                     </div>
                 {:else}
-                    <div class="m-auto p-4 px-6 rounded-md border border-dashed">
-                        <h1 class="text-3xl font-bold fancy">Basic Tier</h1>
-                        <p class="text-lg">The tier for all your basic needs.</p>
+                    <div class="flex m-auto md:space-x-4 space-y-4 md:space-y-0 flex-col md:flex-row w-full md:w-2/3">
+                        <div class="p-4 px-6 rounded-md border border-dashed w-full flex flex-col">
+                            <h1 class="text-3xl font-bold fancy">Basic Tier</h1>
+                            <p class="text-lg">The tier for all your basic needs.</p>
+                            <p class="text-lg mt-4">You will prepay for credits used to send emails, 0.3$/1000 emails</p>
 
-                        <p class="mt-4 text-sm">Starting at</p>
-                        <h2 class="text-2xl font-bold mt-[-4px]">0$/month</h2>
-                        <p style="margin-top: -4px;">+ 0.2$/1000 emails</p>
-                        <p style="margin-top: -4px;">+ 1$/1000 contacts</p>
+                            <h2 class="text-2xl font-bold mt-4">Features</h2>
 
-                        <button 
-                            class="p-2 rounded-md bg-brown text-white w-full font-semibold text-lg mt-6"
-                            onclick={() => {
-                                let metadata = encodeURIComponent(
-                                    JSON.stringify({
-                                        orgId: org.id,
-                                        responsibleUserId: state_.user?.id || "UNKNOWN",
-                                    })
-                                );
+                            <div class="text-green mb-4">
+                                <p class="flex"><Check size="18" class="my-auto mr-1" /> Competitive pricing</p>
+                                <p class="flex"><Check size="18" class="my-auto mr-1" /> 3 team members</p>
+                                <p class="flex"><Check size="18" class="my-auto mr-1" /> 3 domains</p>
+                                <p class="flex text-red"><X size="18" class="my-auto mr-1" /> Max 5000 contacts</p>
+                                <p class="flex text-red"><X size="18" class="my-auto mr-1" /> Prepaid usage only</p>
+                                <p class="flex text-red"><X size="18" class="my-auto mr-1" /> No priority support</p>
+                            </div>
 
-                                console.log(metadata);
+                            <button 
+                                class="p-2 rounded-md bg-brown text-white w-full font-semibold text-lg mt-auto"
+                                onclick={() => {
+                                    
+                                }}
+                            >
+                                Get Started
+                            </button>
+                        </div>
 
+                        <div class="p-4 px-6 rounded-md border border-dashed w-full flex flex-col">
+                            <h1 class="text-3xl font-bold fancy">Enterprise Tier</h1>
+                            <p class="text-lg">A tier built for your business needs.</p>
+                            
+                            <p class="mt-4 text-sm">Starting at</p>
+                            <h2 class="text-2xl font-bold mt-[-4px]">5$/month</h2>
+                            <p style="margin-top: -4px;">+ 0.2$/1000 emails</p>
+                            <p style="margin-top: -4px;">+ 0.1$/1000 contacts</p>
 
-                                goto(
-                                    `/api/v1/billing/checkout?products=${PUBLIC_POLAR_PRODUCT_BASIC_TIER}&customerExternalId=${org.id}&metadata=${metadata}`
-                                );
-                            }}
-                        >
-                            Proceed to Checkout
-                        </button>
+                            <h2 class="text-2xl font-bold mt-4">Features</h2>
 
-                        <h2 class="text-2xl font-bold mt-4">Features</h2>
+                            <div class="text-green mb-4">
+                                <p class="flex"><Check size="18" class="my-auto mr-1" /> 10000 contacts included</p>
+                                <p class="flex"><Check size="18" class="my-auto mr-1" /> Pay as you go</p>
+                                <p class="flex"><Check size="18" class="my-auto mr-1" /> Priority support</p>
+                                <p class="flex"><Check size="18" class="my-auto mr-1" /> Custom solutions</p>
+                                <p class="flex"><Check size="18" class="my-auto mr-1" /> Unlimited team members</p>
+                                <p class="flex"><Check size="18" class="my-auto mr-1" /> Unlimited domains</p>
+                            </div>
 
-                        <div class="text-green">
-                            <p class="flex"><Check size="18" class="my-auto mr-1" /> First 1000 contacts free</p>
-                            <p class="flex"><Check size="18" class="my-auto mr-1" /> Unlimited team members</p>
-                            <p class="flex"><Check size="18" class="my-auto mr-1" /> 3 domains</p>
-                            <p class="flex"><Check size="18" class="my-auto mr-1" /> Email-based support</p>
+                            <button 
+                                class="p-2 rounded-md bg-brown text-white w-full font-semibold text-lg mt-auto"
+                                onclick={() => {
+                                    
+                                }}
+                            >
+                                Contact Us
+                            </button>
                         </div>
                     </div>
                 {/if}

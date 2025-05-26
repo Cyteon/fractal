@@ -17,14 +17,15 @@ datasource db {
 }
 
 model User {
-  id             String          @id @default(uuid())
-  email          String          @unique
-  password       String
-  admin          Boolean         @default(false)
-  suspended      Boolean         @default(false)
-  tokens         Token[]
-  orgMemberships OrgMember[]
-  AuditLogEntry  AuditLogEntry[]
+  id        String  @id @default(uuid())
+  email     String  @unique
+  password  String
+  admin     Boolean @default(false)
+  suspended Boolean @default(false)
+  tokens    Token[]
+
+  orgMemberships  OrgMember[]
+  auditLogEntires AuditLogEntry[]
 }
 
 model Token {
@@ -52,18 +53,49 @@ model OrgMember {
   org  Org  @relation(fields: [orgId], references: [id])
 }
 
+enum BillingModel {
+  SUBSCRIPTION
+  CREDITS
+}
+
+model EnterpriseContact {
+  id    String  @id @default(uuid())
+  orgId String
+  name  String
+  email String
+  phone String?
+  role  String?
+
+  org Org @relation(fields: [orgId], references: [id])
+}
+
 model Org {
-  id                      String    @id @default(uuid())
-  name                    String
-  slug                    String    @unique
-  subscribed              Boolean   @default(false)
-  polarCustomerId         String?
+  id              String       @id @default(uuid())
+  name            String
+  slug            String       @unique
+  subscribed      Boolean      @default(false)
+  billingModel    BillingModel @default(CREDITS)
+  polarCustomerId String?
+
+  // for subscription-based billing
   subcriptionMadeByUserId String?
   subscriptionCreatedAt   DateTime?
   subscriptionId          String?
 
-  members       OrgMember[]
-  AuditLogEntry AuditLogEntry[]
+  // for credits-based billing
+  customerMeterId String?
+
+  // metadata, required for subscription-based billing
+  // optional otherwise
+  phoneNumber     String?
+  website         String?
+  countryCode     String?
+  state           String? // if US
+  legalEntityName String?
+
+  members           OrgMember[]
+  auditLogEntires   AuditLogEntry[]
+  enterprisecontacts EnterpriseContact[]
 }
 
 model AuditLogEntry {
