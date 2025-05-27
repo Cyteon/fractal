@@ -53,9 +53,10 @@ model OrgMember {
   org  Org  @relation(fields: [orgId], references: [id])
 }
 
-enum BillingModel {
+enum BillingType {
   SUBSCRIPTION
   CREDITS
+  NONE
 }
 
 model EnterpriseContact {
@@ -73,8 +74,7 @@ model Org {
   id              String       @id @default(uuid())
   name            String
   slug            String       @unique
-  subscribed      Boolean      @default(false)
-  billingModel    BillingModel @default(CREDITS)
+  billingType     BillingType  @default(NONE)
   polarCustomerId String?
 
   // for subscription-based billing
@@ -95,7 +95,7 @@ model Org {
 
   members           OrgMember[]
   auditLogEntires   AuditLogEntry[]
-  enterprisecontacts EnterpriseContact[]
+  enterpriseContacts EnterpriseContact[]
 }
 
 model AuditLogEntry {

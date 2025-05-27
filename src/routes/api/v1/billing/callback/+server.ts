@@ -69,12 +69,14 @@ export async function GET({ request, url }) {
         });
     }
 
+    // TODO: check if org is verified for subscriptions
+
     await prisma.org.update({
         where: {
             id: org.id,
         },
         data: {
-            subscribed: true,
+            billingType: "SUBSCRIPTION",
             polarCustomerId: customerId,
             subscriptionCreatedAt: new Date(),
             subcriptionMadeByUserId: metadata.responsibleUserId as string,

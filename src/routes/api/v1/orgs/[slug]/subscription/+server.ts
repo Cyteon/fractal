@@ -109,3 +109,94 @@ export async function GET({ params, request }) {
         },
     });
 }
+
+export async function PUT({ params, request }) {
+    const { slug } = params;
+
+    if (!slug) {
+        return Response.json({ error: "Missing org slug" }, {
+            status: 400,
+        });
+    }
+
+    const user = await verify(request);
+
+    if (!user) {
+        return Response.json({ error: "Unauthorized" }, {
+            status: 401,
+        });
+    }
+
+    const org = await prisma.org.findUnique({
+        where: {
+            slug,
+        },
+        include: {
+            members: true,
+        },
+    });
+
+    if (!org) {
+        return Response.json({ error: "Organization not found" }, {
+            status: 404,
+        });
+    }
+
+    const orgMembership = org.members.find((member) => member.userId === user.id);
+
+    if (!orgMembership) {
+        return Response.json({ error: "User not a member of the organization" }, {
+            status: 403,
+        });
+    }
+
+    if (!(orgMembership.role == "OWNER" || orgMembership.role == "ADMIN")) {
+        return Response.json({ error: "Insufficient permissions" }, {
+            status: 403,
+        });
+    }
+
+    const body = await request.json();
+
+    if (!body.type) {
+        return Response.json({ error: "Missing type" }, {
+            status: 400,
+        });
+    }
+
+    // rn we only have type = basic but idk
+    if (body.type !== "BASIC") {
+        return Response.json({ error: "Unsupported subscription type" }, {
+            status: 400,
+        });
+    }
+
+    await prisma.org.update({
+        where: {
+            id: org.id,
+        },
+        data: {
+            billingType: "CREDITS",
+        },
+    });
+
+    try {
+        await prisma.auditLogEntry.create({
+            data: {
+                type: "billing",
+                action: "set_tier",
+                humanReadable: "Set tier to basic",
+                userId: user.id,
+                orgId: org.id,
+            },
+        });
+    } catch (error) {
+        console.error("Failed to create audit log entry:", error);
+    }
+
+    return Response.json({
+        message: "Subscription updated to basic tier",
+    }, {
+        status: 200,
+    });
+}

@@ -41,7 +41,7 @@ export async function GET({ request }) {
                 name: org.name,
                 slug: org.slug,
                 role: org.members[0].role,
-                subscribed: org.subscribed,
+                billingType: org.billingType,
             };
         }),
     });

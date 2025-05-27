@@ -1,117 +1,67 @@
 <script lang="ts">
-    import { goto } from "$app/navigation";
     import Sidebar from "$lib/components/Sidebar.svelte";
+    import CreditsBilling from "$lib/components/views/CreditsBilling.svelte";
     import state_ from "$lib/state.svelte";
     import { Check, X } from "@lucide/svelte";
-    import { PUBLIC_POLAR_PRODUCT_BASIC_TIER } from "$env/static/public";
     import { untrack } from "svelte";
     let { data } = $props();
 
     let org = $state({});
     let subscription = $state({});
-    let finishedLoadingSub = $state(false);
+    let loading = $state(false);
+    let forceShowPlans = $state(false);
 
     $effect(() => {
-        let newOrg = state_.orgs.find((o) => o.slug === data.slug) || {};
-
-        untrack(async () => {
-            if (newOrg && newOrg.id != org.id) {
-                org = newOrg;
-
-                if (newOrg.role === "OWNER" || newOrg.role === "ADMIN") {
-                    try {
-                        const res = await fetch(
-                            `/api/v1/orgs/${newOrg.slug}/subscription`,
-                            {
-                                headers: {
-                                    "Content-Type": "application/json",
-                                },
-                            }
-                        );
-
-                        if (res.status === 404) {
-                            subscription = {};
-                            finishedLoadingSub = true;
-                            return;
-                        } else if (!res.ok) {
-                            throw new Error("Failed to fetch subscription data: " + await res.text());
-                        }
-
-                        const subData = await res.json();
-                        subscription = subData.subscription || {};
-                        finishedLoadingSub = true;
-                    } catch (e) {
-                        console.error("Failed to fetch subscription data", e);
-                    }
-                }
-            }
-        });
+        org = state_.orgs.find((o) => o.slug === data.slug) || {};
     })
+
+    async function enableBasicTier() {
+        loading = true;
+
+        try {
+            const res = await fetch(`/api/v1/orgs/${org.slug}/subscription`, {
+                method: "PUT",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    type: "BASIC",
+                }),
+            });
+
+            if (!res.ok) {
+                throw new Error("Failed to enable basic tier: " + await res.text());
+            }
+
+            const subData = await res.json();
+            subscription = subData.subscription || {};
+            loading = false;
+            org.billingType = "BASIC";
+        } catch (e) {
+            console.error("Failed to enable basic tier", e);
+            throw e; // so gets logged in sentry, i guess
+        }
+    }
 </script>
 
 <div class="w-full h-full flex bg-base rounded-md border border-">
     <Sidebar {org} />
 
-    {#if state_.finishedLoading && finishedLoadingSub}
+    {#if state_.finishedLoading && !loading}
         <div class="p-2 px-4 flex flex-col w-full">
-            <h1 class="text-3xl font-bold mb-4 fancy">
-                Billing
+            <h1 class="text-3xl font-bold mb-4 fancy flex">
+                Billing     
+                
+                {#if org.billingType != "NONE"}
+                    <button class="ml-auto text-[1rem] font-normal my-auto hover:underline" onclick={() => { forceShowPlans = !forceShowPlans; }}>
+                        {forceShowPlans ? "Go back" : "Explore other tiers"}
+                    </button>
+                {/if}
             </h1>
             
             {#if org.role === "OWNER" || org.role === "ADMIN"}
-                {#if org.subscribed}
-                    <div class="border border-dashed w-full md:w-1/3 p-2 px-4 rounded-md">
-                        <div class="flex">
-                            <h1 class="font-semibold text-2xl">Current Plan</h1>
-                            <p class="ml-auto my-auto">Next Invoice - 
-                                {new Date(subscription.currentPeriodEnd).toLocaleDateString("en-US", {
-                                    month: "long",
-                                    day: "numeric",
-                                    year: "numeric"
-                                })}
-                            </p>
-                        </div>
-
-                        <div class="flex">
-                            <p class="text-lg">
-                                {subscription.name}
-                            </p>
-                            <p class="ml-auto my-auto text-lg">
-                                {subscription.amount > 0 ? `${subscription.amount}` : "Free"}
-                            </p>
-                        </div>
-
-                        <p class="text-lg font-semibold my-2">
-                            Metered Usage
-                        </p>
-
-                        {#each subscription.meters as meter}
-                            <div class="flex">
-                                <p class="text-lg">
-                                    {meter.name}
-                                </p>
-                                
-                                <p class="ml-auto my-auto text-lg">
-                                    {(meter.consumedUnits * meter.price).toFixed(2)}$
-                                </p>
-                            </div>
-
-                            <p class="text-sm mt-[-8px] mb-2">
-                                {meter.price*1000}$/1000
-                            </p>
-                        {/each}
-
-                        <hr class="my-2 border-dotted" />
-
-                        <div class="flex">
-                            <p class="text-lg font-semibold">
-                                Total
-                            </p>
-                            <p class="ml-auto my-auto text-lg font-semibold">
-                                {(subscription.amount + subscription.meters?.reduce((acc, meter) => acc + (meter.consumedUnits * meter.price), 0)).toFixed(2)}$
-                            </p>
-                        </div>
-                    </div>
+                {#if org.billingType == "CREDITS" && !forceShowPlans}
+                    <CreditsBilling {org} />
                 {:else}
                     <div class="flex m-auto md:space-x-4 space-y-4 md:space-y-0 flex-col md:flex-row w-full md:w-2/3">
                         <div class="p-4 px-6 rounded-md border border-dashed w-full flex flex-col">
@@ -131,12 +81,11 @@
                             </div>
 
                             <button 
-                                class="p-2 rounded-md bg-brown text-white w-full font-semibold text-lg mt-auto"
-                                onclick={() => {
-                                    
-                                }}
+                                class="p-2 rounded-md bg-brown text-white w-full font-semibold text-lg mt-auto disabled:opacity-50 disabled:cursor-not-allowed!"
+                                onclick={enableBasicTier}
+                                disabled={org.billingType == "CREDITS" || loading}
                             >
-                                Get Started
+                                {org.billingType == "CREDITS" ? "Current Tier" : "Get Started"}
                             </button>
                         </div>
 
@@ -160,14 +109,12 @@
                                 <p class="flex"><Check size="18" class="my-auto mr-1" /> Unlimited domains</p>
                             </div>
 
-                            <button 
-                                class="p-2 rounded-md bg-brown text-white w-full font-semibold text-lg mt-auto"
-                                onclick={() => {
-                                    
-                                }}
+                            <a 
+                                class="p-2 rounded-md bg-brown text-white! text-center w-full font-semibold text-lg mt-auto hover:cursor-pointer"
+                                href={`/dash/${org.slug}/billing/enterprise`}
                             >
                                 Contact Us
-                            </button>
+                            </a>
                         </div>
                     </div>
                 {/if}

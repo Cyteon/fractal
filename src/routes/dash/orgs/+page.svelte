@@ -13,6 +13,7 @@
                     <h1 class="text-xl font-bold">{org.name}</h1>
                     <p class="text-sm font-semibold">Slug: {org.slug}</p>
                     <p class="text-sm font-semibold">Role: {org.role.toLowerCase()}</p>
+                    <p class="text-sm font-semibold">Billing type: {org.billingType.toLowerCase()}</p>
                 </div>
 
                 <button class="ml-auto my-auto text-white bg-brown p-2 rounded-md font-semibold" on:click={() => { 
