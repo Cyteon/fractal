@@ -1,9 +1,12 @@
 <script lang="ts">
+    import { goto } from "$app/navigation";
     import { untrack } from "svelte";
     import { getCookie } from "typescript-cookie";
 
     let { org } = $props();
     let data = $state({});
+
+    let buyCreditsAmount = $state(5000);
 
     $effect(() => {
         if (org && org.billingType == "CREDITS") {
@@ -51,5 +54,18 @@
         <hr class="my-2 border-dashed" />
 
         <p class="flex">Credits Remaining: <span class="ml-auto font-semibold">{data.creditsBalance} credits</span></p>
+
+        <div class="flex mt-4 md:space-x-2 space-y-2 md:space-y-0 md:flex-row flex-col">
+            <select
+                class="border rounded-md p-2 w-full"
+                bind:value={buyCreditsAmount}
+            >
+                <option value={5000}>5,000 credits</option>  
+            </select>
+
+            <button class="w-full bg-brown p-2 rounded-md text-white" onclick={() => { goto(`/api/v1/orgs/${org.slug}/credits/buy?amount=${buyCreditsAmount}`); }}>
+                Purchase Credits
+            </button>
+        </div>
     </div>
 </div>

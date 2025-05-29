@@ -1,15 +1,28 @@
-import prisma from "$lib/prisma";
 import { Polar } from "@polar-sh/sdk";
-import { POLAR_ACCESS_TOKEN, POLAR_ENVIRONMENT } from "$env/static/private";
-import verify from "$lib/server/verify.server.js";
+import { POLAR_ACCESS_TOKEN, BASE_URL, POLAR_ENVIRONMENT } from "$env/static/private";
+import { PUBLIC_POLAR_PRODUCT_5000_CREDITS } from "$env/static/public";
+import verify from "$lib/server/verify.server";
+import prisma from "$lib/prisma.js";
+import { redirect } from "@sveltejs/kit";
 
 const polar = new Polar({
     accessToken: POLAR_ACCESS_TOKEN,
     server: POLAR_ENVIRONMENT as "production" | "sandbox",
 });
 
-export async function GET({ params, request }) {
-    const { slug } = params;
+let creditsMap: Record<string, string> = {
+    "5000": PUBLIC_POLAR_PRODUCT_5000_CREDITS,
+};
+
+export async function GET({ url, request, params }) {
+    const amount = url.searchParams.get("amount");
+    const slug = params.slug;
+
+    if (!amount || !creditsMap[amount]) {
+        return Response.json({ error: "Invalid or missing amount" }, {
+            status: 400,
+        });
+    }
 
     if (!slug) {
         return Response.json({ error: "Missing org slug" }, {
@@ -54,30 +67,18 @@ export async function GET({ params, request }) {
         });
     }
 
-    if (!org.customerMeterId) {
-        return Response.json({
-            creditsBought: 0,
-            creditsUsed: 0,
-            creditsBalance: 0,
-        }, {
-            status: 404,
-        });
-    }
+    const checkout = await polar.checkouts.create({
+        products: [creditsMap[amount]],
 
-    
-    const meter = await polar.customerMeters.get({
-        id: org.customerMeterId,
+        customerExternalId: org.id,
+        metadata: {
+            orgId: org.id,
+            userId: user.id,
+        },
+
+        successUrl: BASE_URL + "/api/v1/orgs/" + slug + "/credits/buy/callback?checkout_id={CHECKOUT_ID}",
     });
 
-    if (!meter) {
-        return Response.json({ error: "Meter not found" }, {
-            status: 404,
-        });
-    }
 
-    return Response.json({
-        creditsBought: meter.creditedUnits,
-        creditsUsed: meter.consumedUnits,
-        creditsBalance: meter.balance,
-    });
+    redirect(303, checkout.url);
 }
