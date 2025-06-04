@@ -35,6 +35,7 @@
 
             if (res.ok) {
                 data.role = "OWNER";
+                data.billingType = "NONE";
                 state.orgs = [...state.orgs, data];
 
                 goto("/dash/orgs");

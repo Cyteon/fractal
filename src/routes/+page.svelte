@@ -1,6 +1,18 @@
 <script lang="ts">
   import Footer from '$lib/components/Footer.svelte';
   import Navbar from '$lib/components/Navbar.svelte';
+
+  const pricingData = [
+    {
+      name: "Fractal", price: 6, color: "bg-blue-500"
+    },
+    {
+      name: "Loops", price: 49, color: "bg-green-500"
+    },
+    {
+      name: "Mailchimp", price: 100, color: "bg-yellow-500"
+    }
+  ]
 </script>
 
 <div class="w-full h-full flex flex-col bg-base rounded-md border">
@@ -17,6 +29,24 @@
         <p class="text-xl mx-auto">
           Marketing emails, newsletters and analytics reimagined.
         </p>
+        
+        <div class="flex flex-col md:flex-row mt-16 text-start justify-center">
+          <div class="p-2 border border-dashed rounded-md md:w-1/3">
+            <h1 class="font-bold text-2xl">We wont steal your money</h1>
+            <p class="text-sm">Pricing in USD for 5000 contacts, 20000 email sends</p>
+
+            {#each pricingData as item}
+              <div class="flex my-2">
+                <span style={`width: ${item.price}%;`} class={`flex min-w-fit rounded-md ${item.color}`}>
+                  <span class="text-white text-center px-2 my-auto">
+                    ${item.price}/mo
+                  </span>
+                </span>
+                <span class="text-lg ml-2">{item.name}</span>
+              </div>
+            {/each}
+          </div>
+        </div>
     </div>
 
     <Footer />
