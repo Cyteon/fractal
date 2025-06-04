@@ -11,6 +11,6 @@
     })
 </script>
 
-<div class="w-full h-full flex bg-base rounded-md border">
+<div class="w-full min-h-full flex bg-base rounded-md border">
     <Sidebar {org} />
 </div>

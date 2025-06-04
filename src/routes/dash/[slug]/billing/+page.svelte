@@ -56,7 +56,7 @@
     }
 </script>
 
-<div class="h-full flex flex-col">
+<div class="min-h-full w-full flex flex-col">
     {#if successMessage}
         <p class="bg-green p-2 rounded-md text-white text-center mb-2 text-lg flex">
             {successMessage}
@@ -134,7 +134,7 @@
 
                                 <a 
                                     class="p-2 rounded-md bg-brown text-white! text-center w-full font-semibold text-lg mt-auto hover:cursor-pointer"
-                                    href={`/dash/${org.slug}/billing/enterprise`}
+                                    href="/enterprise"
                                 >
                                     Contact Us
                                 </a>

@@ -1,6 +1,7 @@
 <script lang="ts">
   import Footer from '$lib/components/Footer.svelte';
   import Navbar from '$lib/components/Navbar.svelte';
+  import state from '$lib/state.svelte';
 
   const pricingData = [
     {
@@ -15,7 +16,7 @@
   ]
 </script>
 
-<div class="w-full h-full flex flex-col bg-base rounded-md border">
+<div class="w-full min-h-full flex flex-col bg-base rounded-md border">
     <Navbar />
 
     <div class="p-2 px-3 w-full flex flex-col text-center">
@@ -29,9 +30,22 @@
         <p class="text-xl mx-auto">
           Marketing emails, newsletters and analytics reimagined.
         </p>
+
+        <button
+          class="mt-4 px-4 py-2 bg-brown text-white rounded-md text-lg font-semibold mx-auto"
+          on:click={() => {
+            if (state.user) {
+              window.location.href = "/dash/orgs";
+            } else {
+              window.location.href = "/login";
+            }
+          }}
+        >
+          {state.user ? "Open Dashboard" : "Get Started"} 
+        </button>
         
-        <div class="flex flex-col md:flex-row mt-16 text-start justify-center">
-          <div class="p-2 border border-dashed rounded-md md:w-1/3">
+        <div class="flex flex-col md:flex-row my-16 text-start justify-center">
+          <div class="p-2 px-4 border border-dashed rounded-md md:w-1/3">
             <h1 class="font-bold text-2xl">We wont steal your money</h1>
             <p class="text-sm">Pricing in USD for 5000 contacts, 20000 email sends</p>
 
@@ -45,6 +59,10 @@
                 <span class="text-lg ml-2">{item.name}</span>
               </div>
             {/each}
+
+            <a href="/pricing" class="mt-3 hover:underline">
+              Expore pricing ->
+            </a>
           </div>
         </div>
     </div>

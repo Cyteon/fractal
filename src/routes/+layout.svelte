@@ -42,6 +42,8 @@
 							&& !window.location.pathname.startsWith("/dash/orgs")
 						) {
 							window.location.href = "/dash/orgs";
+						} else if (window.location.pathname == "/login" || window.location.pathname == "/register") {
+							window.location.href = "/dash/orgs";
 						}
 					} else {
 						if (window.location.pathname.startsWith("/dash")) {

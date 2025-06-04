@@ -55,7 +55,7 @@
     }
 </script>
 
-<div class="flex h-full">
+<div class="flex min-h-full w-full">
     <div class="p-4 m-auto w-full md:w-1/4 flex flex-col bg-base rounded-md border border-black/40">
         <h1 class="text-2xl font-bold mb-4">Create a new Organization</h1>
 
