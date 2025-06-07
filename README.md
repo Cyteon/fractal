@@ -1,5 +1,5 @@
 # Fractal
-Fractal is a loops.so alternative, that is currently being built.
+A loops.so alternative, currently in early development
 
 ## How to run:
 1. Copy `.env.example` to `.env` and fill out the values
